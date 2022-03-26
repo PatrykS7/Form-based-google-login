@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Taco cloud login</title>
+    <title>Login</title>
 </head>
 <body>
 
@@ -23,6 +23,10 @@
     <input type="submit" value="Log in"><br/>
 
 </form>
+
+<div>
+    <a th:href="@{/oauth2/authorization/google}">Login with google</a>
+</div>
 
 </body>
 </html>

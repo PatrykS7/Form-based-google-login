@@ -1,7 +1,10 @@
 package com.example.demo.web;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.security.Principal;
 
 @Controller
 public class WebController {
@@ -13,8 +16,9 @@ public class WebController {
     }
 
     @GetMapping("/sec")
-    public String getSecuredPage(){
+    public String getSecuredPage(Model model, Principal principal){
 
+        model.addAttribute("name", principal.getName());
         return "secured";
     }
 

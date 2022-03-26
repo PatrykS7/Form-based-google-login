@@ -1,5 +1,7 @@
 package com.example.demo.security;
 
+import com.example.demo.security.oauth2.CustomOAuthUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -8,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -19,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication()
                 .withUser("user")
                 .password(encoder().encode("user1"))
-                .authorities("ROLE_ADMIN");
+                .authorities("USER");
     }
 
     @Override
@@ -27,8 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/sec")
-                .hasAuthority("ROLE_ADMIN")
+                .antMatchers("/oauth2/**").permitAll()
+                .antMatchers("/sec").hasAuthority("USER")
                 .antMatchers("/","/**")
                 .permitAll()
 
@@ -40,13 +41,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
 
                 .and()
+                .oauth2Login()
+                    .loginPage("/login")
+                    .userInfoEndpoint().userService(customOAuthUserService)
+                .and()
+
+                .and()
                     .csrf()
                         .disable();
-        
+
     }
 
     @Bean
     public PasswordEncoder encoder(){
         return new BCryptPasswordEncoder();
     }
+
+    @Autowired
+    private CustomOAuthUserService customOAuthUserService;
 }
